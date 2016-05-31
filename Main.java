@@ -52,4 +52,20 @@ public class Main {
 		Log.d("setlocation", "stop");
 
 	}
+	   private void  zwitch(Attributes attributes) throws SAXException
+   {
+      debug("<switch>");
+
+      if (currentElement == null)
+         throw new SAXException("Invalid document. Root element must be <svg>");
+      SVG.Switch  obj = new SVG.Switch();
+      obj.document = svgDocument;
+      obj.parent = currentElement;
+      parseAttributesCore(obj, attributes);
+      parseAttributesStyle(obj, attributes);
+      parseAttributesTransform(obj, attributes);
+      parseAttributesConditional(obj, attributes);
+      currentElement.addChild(obj);
+      currentElement = obj;
+   }
 }
