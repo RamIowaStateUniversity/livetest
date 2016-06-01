@@ -221,4 +221,42 @@ public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws E
                 .findViewById(R.id.root_layout);
 
     }
+
+
+    private void cancelSoftwareAnimations() {
+        if (mAnimRadius != null) {
+            mAnimRadius.cancel();
+            mAnimRadius = null;
+        }
+
+        if (mAnimOpacity != null) {
+            mAnimOpacity.cancel();
+            mAnimOpacity = null;
+        }
+
+        if (mAnimX != null) {
+            mAnimX.cancel();
+            mAnimX = null;
+        }
+
+        if (mAnimY != null) {
+            mAnimY.cancel();
+            mAnimY = null;
+        }
+    }
+
+    public void cancelDrag() {
+        if (mDragState == DRAGGING) {
+            mDragScroller.stopScrolling(true);
+            destroyFloatView();
+            clearPositions();
+            adjustAllItems();
+
+            if (mInTouchEvent) {
+                mDragState = STOPPED;
+            } else {
+                mDragState = IDLE;
+            }
+        }
+    }
 }
