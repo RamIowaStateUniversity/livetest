@@ -161,7 +161,7 @@ public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws E
 
 	}
 
-    public SuperActivityToast(Activity activity, Type type) {
+    public Main(Activity activity, Type type) {
 
         if (activity == null) {
 
