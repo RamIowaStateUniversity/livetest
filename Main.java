@@ -52,7 +52,7 @@ public class Main {
 		Log.d("setlocation", "stop");
 
 	}
-	   private void  zwitch(Attributes attributes) throws SAXException
+   private void  zwitch(Attributes attributes) throws SAXException
    {
       debug("<switch>");
 
@@ -68,4 +68,193 @@ public class Main {
       currentElement.addChild(obj);
       currentElement = obj;
    }
+
+		public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws Exception
+	{
+		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
+
+		// stop straight away of root features are disabled
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(m_context);
+		boolean permsNotNeeded = sharedPrefs.getBoolean("ignore_system_app", false);		
+
+		ArrayList<StatElement> myAlarms = null;
+
+		if (sharedPrefs.getBoolean("force_alarms_api", false))
+		{
+			Log.i(TAG, "Setting set to force the use of the API for alarms");
+			BatteryStatsProxy mStats = BatteryStatsProxy.getInstance(m_context);
+			int statsType = 0;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			{
+				statsType = BatteryStatsTypesLolipop.STATS_CURRENT;
+			}
+			else
+			{
+				statsType = BatteryStatsTypes.STATS_CURRENT;
+			}		
+			
+			myAlarms = mStats.getWakeupStats(m_context, statsType);
+		}
+		else
+		{
+			// use root if available as root delivers more data
+			if (SysUtils.hasBatteryStatsPermission(m_context) && AlarmsDumpsys.alarmsAccessible())
+			{
+				myAlarms = AlarmsDumpsys.getAlarms(!SysUtils.hasDumpsysPermission(m_context));//, false);			
+			}
+			else if (permsNotNeeded || SysUtils.hasBatteryStatsPermission(m_context))
+			{
+				Log.i(TAG, "Accessing Alarms in API mode as dumpsys has failed");
+				BatteryStatsProxy mStats = BatteryStatsProxy.getInstance(m_context);
+				int statsType = 0;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+				{
+					statsType = BatteryStatsTypesLolipop.STATS_CURRENT;
+				}
+				else
+				{
+					statsType = BatteryStatsTypes.STATS_CURRENT;
+				}		
+
+				myAlarms = mStats.getWakeupStats(m_context, statsType);
+			}
+			else
+			{
+				return myStats;
+			}
+		}
+		
+		ArrayList<Alarm> myRetAlarms = new ArrayList<Alarm>();
+		// if we are using custom ref. always retrieve "stats current"
+
+		// sort @see
+		// com.asksven.android.common.privateapiproxies.Walkelock.compareTo
+
+		long elapsedRealtime = SystemClock.elapsedRealtime();
+		for (int i = 0; i < myAlarms.size(); i++)
+		{
+			Alarm alarm = (Alarm) myAlarms.get(i);
+			if (alarm != null)
+			{
+				if ((!bFilter) || ((alarm.getWakeups()) > 0))
+				{
+					alarm.setTimeRunning(elapsedRealtime);
+					myRetAlarms.add(alarm);
+				}
+			}
+		}
+
+		Collections.sort(myRetAlarms);
+
+		for (int i = 0; i < myRetAlarms.size(); i++)
+		{
+			myStats.add((StatElement) myRetAlarms.get(i));
+		}
+
+		if (LogSettings.DEBUG)
+		{
+			Log.d(TAG, "Result " + myStats.toString());
+		}
+
+		return myStats;
+
+	}
+
+public SuperActivityToast(Activity activity, Style style) {
+
+        if (activity == null) {
+
+            throw new IllegalArgumentException(TAG + ERROR_ACTIVITYNULL);
+
+        }
+
+        this.mActivity = activity;
+
+        mLayoutInflater = (LayoutInflater) activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mViewGroup = (ViewGroup) activity
+                .findViewById(android.R.id.content);
+
+        mToastView = mLayoutInflater.inflate(R.layout.super_toast,
+                mViewGroup, false);
+
+        mMessageTextView = (TextView) mToastView
+                .findViewById(R.id.message_textview);
+
+        mRootLayout = (LinearLayout) mToastView
+                .findViewById(R.id.root_layout);
+
+        this.setStyle(style);
+
+    }
+
+    /**
+     * Instantiates a new {@value #TAG} with a type.
+     *
+     * @param activity {@link android.app.Activity}
+     * @param type     {@link com.github.johnpersano.supertoasts.SuperToast.Type}
+     */
+    public SuperActivityToast(Activity activity, Type type) {
+
+        if (activity == null) {
+
+            throw new IllegalArgumentException(TAG + ERROR_ACTIVITYNULL);
+
+        }
+
+        this.mActivity = activity;
+        this.mType = type;
+
+        mLayoutInflater = (LayoutInflater) activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mViewGroup = (ViewGroup) activity
+                .findViewById(android.R.id.content);
+
+        if (type == Type.STANDARD) {
+
+            mToastView = mLayoutInflater.inflate(
+                    R.layout.super_toast, mViewGroup, false);
+
+        } else if (type == Type.BUTTON) {
+
+            mToastView = mLayoutInflater.inflate(
+                    R.layout.sat_button, mViewGroup, false);
+
+            mButton = (Button) mToastView
+                    .findViewById(R.id.button);
+
+            mDividerView = mToastView
+                    .findViewById(R.id.divider);
+
+            mButton.setOnClickListener(mButtonListener);
+
+        } else if (type == Type.PROGRESS) {
+
+            mToastView = mLayoutInflater.inflate(R.layout.sat_progress_circle,
+                    mViewGroup, false);
+
+            mProgressBar = (ProgressBar) mToastView
+                    .findViewById(R.id.progress_bar);
+
+        } else if (type == Type.PROGRESS_HORIZONTAL) {
+
+            mToastView = mLayoutInflater.inflate(R.layout.sat_progress_horizontal,
+                    mViewGroup, false);
+
+            mProgressBar = (ProgressBar) mToastView
+                    .findViewById(R.id.progress_bar);
+
+        }
+
+        mMessageTextView = (TextView) mToastView
+                .findViewById(R.id.message_textview);
+
+        mRootLayout = (LinearLayout) mToastView
+                .findViewById(R.id.root_layout);
+
+    }
+
 }
