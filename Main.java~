@@ -272,7 +272,7 @@ public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws E
 		super.cast( user, dst );
 	}
 
-public static int cast( int from, int to, boolean magic, boolean hitChars ) {
+public static int cast1( int from, int to, boolean magic, boolean hitChars ) {
 		
 		int w = Level.WIDTH;
 		

@@ -342,4 +342,420 @@ public static int cast1( int from, int to, boolean magic, boolean hitChars ) {
 		
 		return to;
 	}
+
+public void init(int width, int height, int levnum) {
+        int ncols;
+        int colsPerSide;
+        this.levnum = levnum;
+
+        int cx = width/2;  // center for drawing; not same as where z-axis goes to.
+        int cy = height * 25/60;  // buttons at bottom of screen, so "center" is  usually a little high of actual screen center
+
+        zpull_x = width/2;  // where z-axis goes; default z pull to be just low of center.
+        zpull_y = height *33/60;
+
+        continuous = false;
+        boolean firsttime = true;
+        int x=0, y=0, oldx=0, oldy=0;
+        exesct = 6 + (int)(1.5*levnum);
+        exesCanMove = (levnum != 1);
+        if (levnum < FIRST_SPIKE_LEVEL)
+            spikespct = (float)0;
+        else if (levnum < FIRST_SPIKE_LEVEL +1)
+            spikespct = (float) 0.5;
+        else if (levnum < FIRST_SPIKE_LEVEL*2)
+            spikespct = (float) 0.75;
+        else spikespct = (float) 1;
+        float rad_dist;
+        float step;
+        int radius = (int)(width*0.48); // consistent-ish radius for levels that have one
+        columns.clear();
+
+        // if we run out of screens....cycle
+        int screennum = (levnum-1) % NUMSCREENS;
+        //screennum=9;
+
+        switch (screennum) {
+            case 0:	// circle
+                ncols = 16;
+                continuous = true;
+                rad_dist = (float) (Math.PI * 2);
+                step = rad_dist/(ncols);
+                for (float rads=0; rads < rad_dist+step/2; rads+=step)
+                {
+                    x = cx - (int)(Math.sin(rads) * radius * .94);
+                    y = cy - (int)(Math.cos(rads) * radius *.99);
+                    if (firsttime){
+                        firsttime = false;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                break;
+
+            case 1: // square
+                continuous = true;
+                ncols = 16;
+                colsPerSide = ncols/4;
+                radius = (int)(width*0.43); // smaller radius for square
+                int cwid = radius*2/colsPerSide;
+                int i;
+                // left
+                for (x = cx - radius, y = cy-radius, i=0; i < colsPerSide; y+=cwid, i++){
+                    if (firsttime){
+                        firsttime = false;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                // bottom
+//                for (x = cx - radius, y = cy+radius; x < cx+radius; x+=(radius*2/colsPerSide)){
+                for (i=0; i < colsPerSide; i++, x+=cwid){
+                    Column col = new Column(oldx, oldy, x, y);
+                    columns.add(col);
+                    oldx = x;
+                    oldy = y;
+                }
+                // right
+//                for (x = cx + radius, y = cy+radius; y > cy-radius; y-=(radius*2/colsPerSide)){
+                for (i=0; i< colsPerSide; i++, y-=cwid){
+                    Column col = new Column(oldx, oldy, x, y);
+                    columns.add(col);
+                    oldx = x;
+                    oldy = y;
+                }
+                // top
+//                for (x = cx + radius, y = cy-radius; x >= cx-radius; x-=(radius*2/colsPerSide)){
+                for (i=0; i<colsPerSide; i++, x-=cwid){
+                    Column col = new Column(oldx, oldy, x, y);
+                    columns.add(col);
+                    oldx = x;
+                    oldy = y;
+                }
+                columns.add(new Column(oldx, oldy, x, y));
+                break;
+
+            case 2: // plus
+                continuous = true;
+                int colwidth = width/5;
+                zpull_x=cx;
+                zpull_y= cy+(int)(colwidth*0.8);
+                x = oldx = cx-colwidth;
+                y = oldy = cy - colwidth;
+                x-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                y+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                y+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                x+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                y+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                x+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                x+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                y-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                x+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                y-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                y-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                x-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                y-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                x-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                x-= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                y+= colwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                break;
+
+            case 3: // infinitybinocularthing
+                ncols = 8;
+                zpull_y = cy;//*41/40;
+                continuous = true;
+                rad_dist = (float) (Math.PI * 2);
+                step = rad_dist/(ncols);
+                int origx=0;
+                int cxc = (int)((float)cx * .44);
+                //radius = (int)((cx - cxc)*0.81f);
+                radius = (int)((cx - cxc)*0.89f);
+                i = 0;
+                for (float rads=-1.5f*step; rads < rad_dist-step*1.5; rads+=step)
+                {
+                    x = cxc - (int)(Math.sin(rads) * radius * .90);
+                    y = cy - (int)(Math.cos(rads) * radius);
+                    if (i == 0 || i == 7){
+                        y = cy - (int)(Math.cos(rads) * radius * 1.3);
+                        x = cxc - (int)(Math.sin(rads) * radius * .85);
+                    }
+                    if (i==0){
+                        origx = x;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+                    i++;
+                }
+                cxc = (int)((float)cx * 1.56);
+                i = 0;
+                for (float rads=+2.5f*step; rads < rad_dist+1.5*step; rads+=step)
+                {
+                    x = cxc - (int)(Math.sin(rads) * radius * .90);
+                    y = cy - (int)(Math.cos(rads) * radius);
+                    if (i == 0 || i == 7){
+                        y = cy - (int)(Math.cos(rads) * radius * 1.3);
+                        x = cxc - (int)(Math.sin(rads) * radius * .85);
+                    }
+                    Column col = new Column(oldx, oldy, x, y);
+                    columns.add(col);
+                    oldx = x;
+                    oldy = y;
+                    i++;
+                }
+                columns.add(new Column(oldx, oldy, origx, y));
+                break;
+
+            case 4: // triangle
+                continuous = true;
+                //radius = 320;
+                ncols = 15;
+                colsPerSide = ncols/3;
+                zpull_x = width/2;
+                zpull_y = height *29/60;
+                // left
+                for (x = cx, y = cy-radius; y < cy+radius*4/5; y+=(radius*4/3/colsPerSide),x-=radius*3/4/colsPerSide){
+                    if (firsttime){
+                        firsttime = false;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                // bottom
+                firsttime = true;
+                int targx = cx + (cx-oldx);
+                for (x = oldx, y = oldy; x < targx; x+=(radius*4/3/colsPerSide)){
+                    if (firsttime){
+                        firsttime = false;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                // right
+                for (; y >= cy-radius; y-=(radius*4/3/colsPerSide),x-=radius*3/4/colsPerSide+4){
+                    Column col = new Column(oldx, oldy, x, y);
+                    columns.add(col);
+                    oldx = x;
+                    oldy = y;
+                }
+                // force rounding error mess to go away
+                Column lastcol = columns.get(columns.size()-1);
+                lastcol.setFrontPoint2(columns.get(0).getFrontPoint1());
+                break;
+
+            case 5: // straight, angled V
+                ncols = 16;
+                // need a different z-pull for a board using this screen
+                zpull_x = cx;
+                zpull_y = height /4;
+                int yhi = cy/3;
+                int ylow = cy*5/3;
+                int ydist = ylow-yhi;
+                int xdist = cx * 3/2;  // 1/4 of cx on each side
+                for (x = 0, y = ylow; y >= yhi; x+= xdist/(ncols), y-=ydist/(ncols/2)){
+                    if (firsttime){
+                        firsttime = false;
+                    }
+                    else {
+                        columns.add(0, new Column(cx-x, y, cx-oldx, oldy));
+                        columns.add(new Column(cx+oldx, oldy, cx+x, y));
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                break;
+
+            case 6: // jagged V
+                zpull_x = width/2;
+                zpull_y = height /5;
+                int total_cols = 15;  // must be ODD
+                int xcolwidth = (int) Math.floor(width/(total_cols/2 + 1)); // should be enough
+                int ycolwidth = xcolwidth * 5/4;
+                int ystart;
+                x = oldx = cx - (int)(xcolwidth*3.5);
+                y = oldy = ystart = cy - ycolwidth;
+                y+=ycolwidth;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldy = y;
+                while (y < ystart + ycolwidth*4){
+                    x+=xcolwidth;
+                    columns.add(new Column(oldx, oldy, x, y));
+                    oldx=x;
+                    y+=ycolwidth;
+                    columns.add(new Column(oldx, oldy, x, y));
+                    oldy=y;
+                }
+                while (y > ystart){
+                    x+=xcolwidth;
+                    columns.add(new Column(oldx, oldy, x, y));
+                    oldx=x;
+                    y-=ycolwidth;
+                    columns.add(new Column(oldx, oldy, x, y));
+                    oldy=y;
+                }
+                break;
+
+            case 7:	// U
+                // arc portion
+                ncols = 8;
+                radius *= .9;
+                rad_dist = (float) (Math.PI); // half circ
+                step = rad_dist/(ncols);
+                zpull_x = width/2;
+                zpull_y = height*17/28;
+                int xradius=0, orgy=0, straightstepdist=0;
+                for (double rads=0; rads < Math.PI+step/2; rads+=step)
+                {
+                    x = cx - (int)(Math.cos(rads) * radius * .95);
+                    y = cy * 12/10 + (int)(Math.sin(rads) * radius);
+                    if (firsttime){
+                        firsttime = false;
+                        xradius = cx - x;
+                        orgy = y;
+                        straightstepdist = (int)(Math.sin(step) * radius);
+                    }
+                    else {
+                        columns.add(new Column(oldx, oldy, x, y));
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                for (int j=0; j<3; j++)
+                    columns.add(0, new Column(cx-xradius, orgy-straightstepdist*(j+1), cx-xradius, orgy-straightstepdist*j));
+                for (int j=0; j<3; j++)
+                    columns.add(new Column(cx+xradius, orgy-straightstepdist*j, cx+xradius, orgy-straightstepdist*(j+1)));
+                break;
+
+            case 8: // straight line
+                ncols = 14;
+                // need a different z-pull for a board using this screen
+                zpull_x = width/2;
+                zpull_y = height /4;
+                y = height * 4/7;
+                for (x = width *1/(ncols+1); x < width * (1+ncols)/(ncols+2); x+= width/(ncols+2)){
+                    if (firsttime){
+                        firsttime = false;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+
+                }
+                break;
+
+            case 9: // crossing infinity
+                ncols = 10;
+                zpull_y = cy*38/40;
+                continuous = true;
+                rad_dist = (float) (Math.PI * 2);
+                step = rad_dist/(ncols);
+                origx=0;
+                orgy=0;
+                cxc = (int)((float)cx * .44);
+                radius = (int)((cx - cxc)*0.88f);
+                firsttime = true;
+                for (float rads=-1.5f*step; rads < rad_dist-step*3.5; rads+=step)
+                {
+                    x = cxc - (int)(Math.sin(rads) * radius * .90);
+                    y = cy - (int)(Math.cos(rads) * radius);
+//                    if (i == 0 || i == 7){
+//                        y = cy - (int)(Math.cos(rads) * radius * 1.3);
+//                        x = cxc - (int)(Math.sin(rads) * radius * .85);
+//                    }
+                    if (firsttime){
+                        origx = x;
+                        orgy = y;
+                        firsttime = false;
+                    }
+                    else {
+                        Column col = new Column(oldx, oldy, x, y);
+                        columns.add(col);
+                    }
+                    oldx = x;
+                    oldy = y;
+                }
+                x = cx;
+                y = cy;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                oldy = y;
+
+                cxc = (int)((float)cx * 1.56);
+                for (float rads=+1.5f*step; rads > -rad_dist+3.5*step; rads-=step)
+                {
+                    x = cxc - (int)(Math.sin(rads) * radius * .90);
+                    y = cy - (int)(Math.cos(rads) * radius);
+//                    if (i == 0 || i == 7){
+//                        y = cy - (int)(Math.cos(rads) * radius * 1.3);
+//                        x = cxc - (int)(Math.sin(rads) * radius * .85);
+//                    }
+                    Column col = new Column(oldx, oldy, x, y);
+                    columns.add(col);
+                    oldx = x;
+                    oldy = y;
+                }
+                x = cx;
+                y = cy;
+                columns.add(new Column(oldx, oldy, x, y));
+                oldx = x;
+                oldy = y;
+                columns.add(new Column(oldx, oldy, origx, orgy));
+                break;
+
+        }
+    }
 }
