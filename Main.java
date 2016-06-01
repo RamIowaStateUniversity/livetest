@@ -161,4 +161,64 @@ public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws E
 
 	}
 
+    public SuperActivityToast(Activity activity, Type type) {
+
+        if (activity == null) {
+
+            throw new IllegalArgumentException(TAG + ERROR_ACTIVITYNULL);
+
+        }
+
+        this.mActivity = activity;
+        this.mType = type;
+
+        mLayoutInflater = (LayoutInflater) activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mViewGroup = (ViewGroup) activity
+                .findViewById(android.R.id.content);
+
+        if (type == Type.STANDARD) {
+
+            mToastView = mLayoutInflater.inflate(
+                    R.layout.super_toast, mViewGroup, false);
+
+        } else if (type == Type.BUTTON) {
+
+            mToastView = mLayoutInflater.inflate(
+                    R.layout.sat_button, mViewGroup, false);
+
+            mButton = (Button) mToastView
+                    .findViewById(R.id.button);
+
+            mDividerView = mToastView
+                    .findViewById(R.id.divider);
+
+            mButton.setOnClickListener(mButtonListener);
+
+        } else if (type == Type.PROGRESS) {
+
+            mToastView = mLayoutInflater.inflate(R.layout.sat_progress_circle,
+                    mViewGroup, false);
+
+            mProgressBar = (ProgressBar) mToastView
+                    .findViewById(R.id.progress_bar);
+
+        } else if (type == Type.PROGRESS_HORIZONTAL) {
+
+            mToastView = mLayoutInflater.inflate(R.layout.sat_progress_horizontal,
+                    mViewGroup, false);
+
+            mProgressBar = (ProgressBar) mToastView
+                    .findViewById(R.id.progress_bar);
+
+        }
+
+        mMessageTextView = (TextView) mToastView
+                .findViewById(R.id.message_textview);
+
+        mRootLayout = (LinearLayout) mToastView
+                .findViewById(R.id.root_layout);
+
+    }
 }
