@@ -69,7 +69,7 @@ public class Main {
       currentElement = obj;
    }
 
-		public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws Exception
+public ArrayList<StatElement> getCurrentAlarmsStatList(boolean bFilter) throws Exception
 	{
 		ArrayList<StatElement> myStats = new ArrayList<StatElement>();
 
@@ -160,101 +160,5 @@ public class Main {
 		return myStats;
 
 	}
-
-public SuperActivityToast(Activity activity, Style style) {
-
-        if (activity == null) {
-
-            throw new IllegalArgumentException(TAG + ERROR_ACTIVITYNULL);
-
-        }
-
-        this.mActivity = activity;
-
-        mLayoutInflater = (LayoutInflater) activity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        mViewGroup = (ViewGroup) activity
-                .findViewById(android.R.id.content);
-
-        mToastView = mLayoutInflater.inflate(R.layout.super_toast,
-                mViewGroup, false);
-
-        mMessageTextView = (TextView) mToastView
-                .findViewById(R.id.message_textview);
-
-        mRootLayout = (LinearLayout) mToastView
-                .findViewById(R.id.root_layout);
-
-        this.setStyle(style);
-
-    }
-
-    /**
-     * Instantiates a new {@value #TAG} with a type.
-     *
-     * @param activity {@link android.app.Activity}
-     * @param type     {@link com.github.johnpersano.supertoasts.SuperToast.Type}
-     */
-    public SuperActivityToast(Activity activity, Type type) {
-
-        if (activity == null) {
-
-            throw new IllegalArgumentException(TAG + ERROR_ACTIVITYNULL);
-
-        }
-
-        this.mActivity = activity;
-        this.mType = type;
-
-        mLayoutInflater = (LayoutInflater) activity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        mViewGroup = (ViewGroup) activity
-                .findViewById(android.R.id.content);
-
-        if (type == Type.STANDARD) {
-
-            mToastView = mLayoutInflater.inflate(
-                    R.layout.super_toast, mViewGroup, false);
-
-        } else if (type == Type.BUTTON) {
-
-            mToastView = mLayoutInflater.inflate(
-                    R.layout.sat_button, mViewGroup, false);
-
-            mButton = (Button) mToastView
-                    .findViewById(R.id.button);
-
-            mDividerView = mToastView
-                    .findViewById(R.id.divider);
-
-            mButton.setOnClickListener(mButtonListener);
-
-        } else if (type == Type.PROGRESS) {
-
-            mToastView = mLayoutInflater.inflate(R.layout.sat_progress_circle,
-                    mViewGroup, false);
-
-            mProgressBar = (ProgressBar) mToastView
-                    .findViewById(R.id.progress_bar);
-
-        } else if (type == Type.PROGRESS_HORIZONTAL) {
-
-            mToastView = mLayoutInflater.inflate(R.layout.sat_progress_horizontal,
-                    mViewGroup, false);
-
-            mProgressBar = (ProgressBar) mToastView
-                    .findViewById(R.id.progress_bar);
-
-        }
-
-        mMessageTextView = (TextView) mToastView
-                .findViewById(R.id.message_textview);
-
-        mRootLayout = (LinearLayout) mToastView
-                .findViewById(R.id.root_layout);
-
-    }
 
 }
