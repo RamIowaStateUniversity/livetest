@@ -15,6 +15,18 @@ public class Main {
 				j++;				
 			}
 	}
+
+	public static void alias(String[] a) {		
+			int y = 90;
+			int x = y;
+			int m = 70;
+			int n = m;
+			m = m + 1;
+			System.out.prinltn(n + x);
+			Main p =new Main();
+			Main q = p;
+			p.obj = 4;
+	}
 	
 	public void setLocationWorld(int tile_x, int tile_y) {
 		Log.d("setlocation", "start");
