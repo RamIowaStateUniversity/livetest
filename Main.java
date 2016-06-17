@@ -782,4 +782,16 @@ public void init(int width, int height, int levnum) {
         }
         return app_installed;
     }
+
+public List<Test> asTestList(Description description) {
+        if (description.isTest()) {
+            return Arrays.asList(asTest(description));
+        } else {
+            List<Test> returnThis = new ArrayList<Test>();
+            for (Description child : description.getChildren()) {
+                returnThis.add(asTest(child));
+            }
+            return returnThis;
+        }
+    }
 }
