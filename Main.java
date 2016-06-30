@@ -767,6 +767,7 @@ public void init(int width, int height, int levnum) {
                 oldy = y;
                 columns.add(new Column(oldx, oldy, origx, orgy));
                 break;
+		default : break;
 
         }
     }
